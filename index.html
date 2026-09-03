@@ -1,397 +1,552 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>簿記仕訳マスター (Bookkeeping App)</title>
-<style>
-  :root {
-    --primary: #2563eb;
-    --success: #16a34a;
-    --danger: #dc2626;
-    --bg: #f8fafc;
-    --card: #ffffff;
-    --text: #1e293b;
-    --border: #cbd5e1;
-  }
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    background-color: var(--bg);
-    color: var(--text);
-    margin: 0;
-    padding: 16px;
-  }
-  .container {
-    max-width: 600px;
-    margin: 0 auto;
-    background: var(--card);
-    padding: 20px;
-    border-radius: 16px;
-    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
-  }
-  h1 { font-size: 1.25rem; text-align: center; color: var(--primary); margin: 0 0 12px 0; }
-  
-  details {
-    background: #f1f5f9;
-    padding: 10px 14px;
-    border-radius: 8px;
-    margin-bottom: 16px;
-    font-size: 0.9rem;
-    border: 1px solid var(--border);
-  }
-  summary {
-    font-weight: bold;
-    cursor: pointer;
-    color: #475569;
-  }
-  textarea {
-    width: 100%;
-    height: 100px;
-    margin-top: 8px;
-    padding: 8px;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    font-size: 0.85rem;
-    box-sizing: border-box;
-    font-family: monospace;
-  }
-  .load-btn {
-    margin-top: 6px;
-    padding: 8px;
-    font-size: 0.85rem;
-    background: #475569;
-  }
-
-  .progress { font-size: 0.9rem; text-align: right; color: #64748b; margin-bottom: 8px; font-weight: 500; }
-  .story-card {
-    background: #f8fafc;
-    padding: 16px;
-    border-radius: 12px;
-    border-left: 5px solid var(--primary);
-    margin-bottom: 20px;
-    line-height: 1.6;
-    font-size: 0.95rem;
-    border-top: 1px solid #e2e8f0;
-    border-right: 1px solid #e2e8f0;
-    border-bottom: 1px solid #e2e8f0;
-  }
-  .entry-box {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 16px;
-  }
-  .entry-side {
-    flex: 1;
-    background: #ffffff;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 10px;
-  }
-  .side-title {
-    font-weight: bold;
-    text-align: center;
-    margin-bottom: 8px;
-    font-size: 0.85rem;
-    color: #475569;
-  }
-  select, input {
-    width: 100%;
-    padding: 8px;
-    margin-bottom: 8px;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    font-size: 0.95rem;
-    box-sizing: border-box;
-  }
-  button {
-    width: 100%;
-    padding: 14px;
-    background: var(--primary);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 1rem;
-    font-weight: bold;
-    cursor: pointer;
-    touch-action: manipulation;
-  }
-  button:active { opacity: 0.8; }
-  .result {
-    margin-top: 16px;
-    padding: 14px;
-    border-radius: 8px;
-    display: none;
-  }
-  .result.correct { background: #dcfce7; color: var(--success); border: 1px solid #86efac; }
-  .result.incorrect { background: #fee2e2; color: var(--danger); border: 1px solid #fca5a5; }
-  .explanation {
-    margin-top: 8px;
-    color: var(--text);
-    font-size: 0.9rem;
-    line-height: 1.5;
-  }
-  .nav-btn {
-    margin-top: 12px;
-    background: #334155;
-  }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CYBER_DECK // ROOT_ACCOUNTING</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    :root {
+      --terminal-bg: #050807;
+      --panel-bg: #0a110e;
+      --matrix-green: #00ff66;
+      --glow-green: rgba(0, 255, 102, 0.4);
+      --alert-red: #ff3333;
+      --glow-red: rgba(255, 51, 51, 0.4);
+      --border-color: #123824;
+      --text-dim: #5c9e78;
+    }
+    body {
+      font-family: "Consolas", "Courier New", Courier, monospace;
+      background-color: var(--terminal-bg);
+      color: var(--matrix-green);
+      margin: 0;
+      padding: 16px;
+      display: flex;
+      justify-content: center;
+      text-shadow: 0 0 3px var(--glow-green);
+    }
+    .container {
+      width: 100%;
+      max-width: 680px;
+      background: var(--panel-bg);
+      padding: 20px;
+      border-radius: 4px;
+      border: 1px solid var(--matrix-green);
+      box-shadow: 0 0 15px var(--glow-green);
+    }
+    .header {
+      border-bottom: 1px dashed var(--matrix-green);
+      padding-bottom: 10px;
+      margin-bottom: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .header h1 {
+      font-size: 0.95rem;
+      color: var(--matrix-green);
+      margin: 0;
+      letter-spacing: 2px;
+    }
+    .card {
+      background: #060c09;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+    .story-text {
+      font-size: 0.95rem;
+      line-height: 1.6;
+      margin: 0;
+      color: #bbf7d0;
+    }
+    .split-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      width: 100%;
+      margin-bottom: 16px;
+    }
+    @media (max-width: 560px) {
+      .split-container { grid-template-columns: 1fr; }
+    }
+    .side-column {
+      background: #060c09;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      padding: 12px;
+      width: 100%;
+    }
+    .side-title {
+      font-weight: bold;
+      font-size: 0.85rem;
+      margin-bottom: 8px;
+      text-align: center;
+      color: var(--matrix-green);
+      letter-spacing: 1px;
+    }
+    .entry-row {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 8px;
+      align-items: center;
+      width: 100%;
+    }
+    .entry-row input[type="text"] {
+      flex: 1.2;
+      width: 0;
+      padding: 8px;
+      font-size: 0.85rem;
+      background: #020503;
+      border: 1px solid var(--border-color);
+      border-radius: 2px;
+      color: var(--matrix-green);
+      min-width: 0;
+      font-family: inherit;
+    }
+    .entry-row input[type="number"] {
+      flex: 1;
+      width: 0;
+      padding: 8px;
+      font-size: 0.85rem;
+      background: #020503;
+      border: 1px solid var(--border-color);
+      border-radius: 2px;
+      color: var(--matrix-green);
+      min-width: 0;
+      font-family: inherit;
+    }
+    .entry-row input:focus {
+      outline: none;
+      border-color: var(--matrix-green);
+      box-shadow: 0 0 5px var(--glow-green);
+    }
+    .btn-remove {
+      background: #2b0b0b;
+      border: 1px solid var(--alert-red);
+      color: var(--alert-red);
+      font-size: 0.9rem;
+      cursor: pointer;
+      padding: 6px 8px;
+      border-radius: 2px;
+    }
+    .btn-add {
+      width: 100%;
+      background: #08140e;
+      border: 1px dashed var(--border-color);
+      border-radius: 2px;
+      padding: 6px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      color: var(--text-dim);
+      font-family: inherit;
+    }
+    .btn-submit {
+      width: 100%;
+      background: var(--matrix-green);
+      color: #000;
+      border: none;
+      border-radius: 2px;
+      padding: 12px;
+      font-size: 0.95rem;
+      font-weight: bold;
+      cursor: pointer;
+      letter-spacing: 2px;
+      font-family: inherit;
+      box-shadow: 0 0 10px var(--glow-green);
+    }
+    .btn-submit:active {
+      opacity: 0.85;
+    }
+    .result-box {
+      margin-top: 16px;
+      padding: 14px;
+      border-radius: 2px;
+      display: none;
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+    .result-box.correct {
+      background: #021a0d;
+      border: 1px solid var(--matrix-green);
+      color: var(--matrix-green);
+      box-shadow: 0 0 10px var(--glow-green);
+    }
+    .result-box.wrong {
+      background: #210404;
+      border: 1px solid var(--alert-red);
+      color: #ff9999;
+      box-shadow: 0 0 10px var(--glow-red);
+      text-shadow: 0 0 3px var(--glow-red);
+    }
+    .nav-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 16px;
+    }
+    .nav-btn {
+      background: #0c1a13;
+      color: var(--matrix-green);
+      border: 1px solid var(--border-color);
+      border-radius: 2px;
+      padding: 8px 16px;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .clear-card {
+      text-align: center;
+      padding: 30px 16px;
+      display: none;
+    }
+    details {
+      margin-top: 24px;
+      border-top: 1px dashed var(--border-color);
+      padding-top: 12px;
+    }
+    textarea {
+      width: 100%;
+      height: 100px;
+      background: #020503;
+      border: 1px solid var(--border-color);
+      color: var(--matrix-green);
+      padding: 8px;
+      font-family: inherit;
+      font-size: 0.8rem;
+    }
+  </style>
 </head>
 <body>
 
 <div class="container">
-  <h1>簿記3級 仕訳ドリル (Bookkeeping Practice)</h1>
+  <div class="header">
+    <h1>> CYBER_DECK // BOKI_HACK_V3</h1>
+    <span style="font-size:0.75rem; color:var(--text-dim);" id="status-tag">STATUS: ROOT_INTRUSION</span>
+  </div>
+
+  <div id="quiz-area">
+    <div class="card">
+      <div style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 6px;" id="q-number">> NODE_TARGET // 01</div>
+      <p class="story-text" id="story-display">DECRYPTING PACKET...</p>
+    </div>
+
+    <div class="split-container">
+      <div class="side-column">
+        <div class="side-title">借方 (DEBIT)</div>
+        <div id="debit-rows"></div>
+        <button type="button" class="btn-add" onclick="addRow('debit')">+ INSERT REG</button>
+      </div>
+      <div class="side-column">
+        <div class="side-title">貸方 (CREDIT)</div>
+        <div id="credit-rows"></div>
+        <button type="button" class="btn-add" onclick="addRow('credit')">+ INSERT REG</button>
+      </div>
+    </div>
+
+    <button type="button" class="btn-submit" onclick="checkAnswer()">EXECUTE INJECTION // パケット送信</button>
+    <div id="result-display" class="result-box"></div>
+
+    <div class="nav-buttons">
+      <button type="button" class="nav-btn" onclick="prevQuestion()">< PREV_NODE</button>
+      <button type="button" class="nav-btn" id="next-btn" onclick="nextQuestion()">NEXT_NODE ></button>
+    </div>
+  </div>
+
+  <div id="clear-area" class="clear-card card">
+    <h2 style="color:var(--matrix-green); margin-top:0;">> INTRUSION_REPORT_COMPLETE</h2>
+    <p id="score-text"></p>
+    <button type="button" class="btn-submit" onclick="restartQuiz()">RE-CONNECT // ループ再実行</button>
+  </div>
 
   <details>
-    <summary>⚙️ 新しいストーリー問題を読み込む (JSON)</summary>
-    <textarea id="jsonInput" placeholder="AIが作成したJSONデータ（[ ... ]）をここに貼り付けます"></textarea>
-    <button class="load-btn" onclick="importCustomQuiz()">問題を反映する (Load Quiz)</button>
+    <summary style="cursor:pointer; font-size:0.8rem; color:var(--text-dim);">> OVERRIDE_PAYLOAD // JSONロード</summary>
+    <textarea id="json-input" placeholder="PASTE JSON STREAM HERE"></textarea>
+    <button type="button" class="btn-submit" style="background:#059669; color:#fff; margin-top:6px;" onclick="loadCustomData()">IMPORT PAYLOAD</button>
   </details>
-
-  <div class="progress" id="progress">第 1 問 / 全 10 問</div>
-
-  <div class="story-card" id="questionText">問題文を読み込み中...</div>
-
-  <div class="entry-box">
-    <div class="entry-side">
-      <div class="side-title">借方 (Debit)</div>
-      <select id="debitAccount"></select>
-      <input type="number" id="debitAmount" placeholder="金額 (Amount)">
-    </div>
-    <div class="entry-side">
-      <div class="side-title">貸方 (Credit)</div>
-      <select id="creditAccount"></select>
-      <input type="number" id="creditAmount" placeholder="金額 (Amount)">
-    </div>
-  </div>
-
-  <button id="submitBtn" onclick="checkAnswer()">解答する (Submit)</button>
-
-  <div class="result" id="resultBox">
-    <div id="resultText" style="font-weight:bold;"></div>
-    <div class="explanation" id="explanationText"></div>
-    <button class="nav-btn" id="nextBtn" onclick="nextQuestion()">次の問題へ (Next)</button>
-  </div>
 </div>
 
 <script>
-// 1. ベースとなる基本勘定科目リスト
-const BASE_ACCOUNTS = [
-  "現金", "当座預金", "普通預金", "売掛金", "買掛金",
-  "商品", "備品", "売上", "仕入", "受取手数料", "支払家賃", "資本金"
-];
-
-// 動的に拡張される勘定科目リスト
-let currentAccounts = [...BASE_ACCOUNTS];
-
-// 2. 初期デフォルト問題（ドラゴンボール・現金編）
-const DEFAULT_QUIZ = [
+// 簿記3級の重要論点を網羅したハッカー・サイバーパンクシナリオ（10問）
+const defaultData = [
   {
-    "story": "【カメハウス 1】亀仙人は、修行用の甲羅や道着（仕入）5,000円分を購入し、代金を現金で支払った。",
-    "debit": { "account": "仕入", "amount": 5000 },
-    "credit": { "account": "現金", "amount": 5000 },
-    "explanation": "費用（Expense）である「仕入」が増加（借方）、資産（Asset）である「現金」が減少（貸方）します。"
+    "story": "アンダーグラウンドのサイバー秘密結社を立ち上げるため、リーダーの「ZERO」は個人資産の暗号通貨等を換金した現金 300,000円を元入れした（資本金勘定を用いること）。",
+    "debit": [
+      { "account": "現金", "amount": 300000 }
+    ],
+    "credit": [
+      { "account": "資本金", "amount": 300000 }
+    ],
+    "explanation": "資本金の元入れによる現金の増加です。資産の増加（現金）を借方に、純資産の増加（資本金）を貸方に記帳します。"
   },
   {
-    "story": "【カメハウス 2】悟空とクリリンが牛乳配達のアルバイトをして、報酬として現金 3,000円を受け取った（受取手数料）。",
-    "debit": { "account": "現金", "amount": 3000 },
-    "credit": { "account": "受取手数料", "amount": 3000 },
-    "explanation": "資産（Asset）である「現金」が増加（借方）、収益（Revenue）である「受取手数料」が増加（貸方）します。"
+    "story": "サイバー攻撃の解析拠点とするアジトの当月分サーバーラック設置料（支払家賃）60,000円を現金で支払った。",
+    "debit": [
+      { "account": "支払家賃", "amount": 60000 }
+    ],
+    "credit": [
+      { "account": "現金", "amount": 60000 }
+    ],
+    "explanation": "家賃の支払いは費用の発生であるため支払家賃を借方に、代金として手持ちの現金（資産）が減少したため貸方に記帳します。"
   },
   {
-    "story": "【カメハウス 3】ブルマから特製カプセル（備品）20,000円を現金で購入した。",
-    "debit": { "account": "備品", "amount": 20000 },
-    "credit": { "account": "現金", "amount": 20000 },
-    "explanation": "資産（Asset）である「備品」が増加（借方）、資産の「現金」が減少（貸方）します。"
+    "story": "巨大メガコーポのファイアウォールを突破するため、特注の高性能サイバーデッキ（備品）180,000円を裏ルートで購入し、代金は普通預金口座から即時送金した。",
+    "debit": [
+      { "account": "備品", "amount": 180000 }
+    ],
+    "credit": [
+      { "account": "普通預金", "amount": 180000 }
+    ],
+    "explanation": "PCや専用端末などの機材は資産の「備品」として計上します。普通預金の減少は資産の減少として貸方に記帳します。"
   },
   {
-    "story": "【カメハウス 4】カメハウスの敷地代（支払家賃）10,000円を現金で支払った。",
-    "debit": { "account": "支払家賃", "amount": 10000 },
-    "credit": { "account": "現金", "amount": 10000 },
-    "explanation": "費用（Expense）である「支払家賃」が増加（借方）、資産の「現金」が減少（貸方）します。"
+    "story": "ブラックマーケットから脆弱性攻撃パッチ（商品）80,000円を掛けで仕入れた。",
+    "debit": [
+      { "account": "仕入", "amount": 80000 }
+    ],
+    "credit": [
+      { "account": "買掛金", "amount": 80000 }
+    ],
+    "explanation": "転売目的の物資の仕入れは費用の発生として「仕入」を借方に、掛けによる後払いの債務は負債の増加として「買掛金」を貸方に計上します。"
   },
   {
-    "story": "【カメハウス 5】ヤムチャに貸していた掛け代金（売掛金）8,000円が、現金で回収された。",
-    "debit": { "account": "現金", "amount": 8000 },
-    "credit": { "account": "売掛金", "amount": 8000 },
-    "explanation": "資産（Asset）である「現金」が増加（借方）、資産である「売掛金」が減少（貸方）します。"
+    "story": "顧客である反体制シンジケートへ暗号解読キー（商品）120,000円を掛けで販売した。",
+    "debit": [
+      { "account": "売掛金", "amount": 120000 }
+    ],
+    "credit": [
+      { "account": "売上", "amount": 120000 }
+    ],
+    "explanation": "商品を掛けで販売したため、代金を受け取る権利（資産）として「売掛金」を借方に、収益の発生として「売上」を貸方に記帳します。"
   },
   {
-    "story": "【カメハウス 6】武道寺への道場使用料のツケ（買掛金）4,000円を現金で支払った。",
-    "debit": { "account": "買掛金", "amount": 4000 },
-    "credit": { "account": "現金", "amount": 4000 },
-    "explanation": "負債（Liability）である「買掛金」が減少（借方）、資産である「現金」が減少（貸方）します。"
+    "story": "以前メガコーポの通信を妨害して掛けで売り上げていた売掛金 50,000円が、当座預金口座に振り込まれて回収された。",
+    "debit": [
+      { "account": "当座預金", "amount": 50000 }
+    ],
+    "credit": [
+      { "account": "売掛金", "amount": 50000 }
+    ],
+    "explanation": "売掛金の回収により資産である当座預金が増加（借方）、債権である売掛金が消滅・減少（貸方）します。"
   },
   {
-    "story": "【カメハウス 7】手持ちの現金 15,000円を、安全のために普通預金口座へ預け入れた。",
-    "debit": { "account": "普通預金", "amount": 15000 },
-    "credit": { "account": "現金", "amount": 15000 },
-    "explanation": "資産（Asset）である「普通預金」が増加（借方）、同じく資産である「現金」が減少（貸方）します。"
+    "story": "闇ブローカーに支払うべき買掛金 40,000円について、当座小切手を振り出して支払った（当座預金勘定を用いること）。",
+    "debit": [
+      { "account": "買掛金", "amount": 40000 }
+    ],
+    "credit": [
+      { "account": "当座預金", "amount": 40000 }
+    ],
+    "explanation": "小切手を自己振り出しした場合、銀行口座から即座に決済されるため「当座預金」の減少（貸方）として処理します。"
   },
   {
-    "story": "【カメハウス 8】修行用の食材を現金 2,000円で仕入れた。",
-    "debit": { "account": "仕入", "amount": 2000 },
-    "credit": { "account": "現金", "amount": 2000 },
-    "explanation": "費用（Expense）の「仕入」が増加（借方）、資産の「現金」が減少（貸方）します。"
+    "story": "同盟ハッカーグループの通信パケット暗号化を代行し、技術コンサルティング料として受取手数料 25,000円を現金で受け取った。",
+    "debit": [
+      { "account": "現金", "amount": 25000 }
+    ],
+    "credit": [
+      { "account": "受取手数料", "amount": 25000 }
+    ],
+    "explanation": "役務提供に対する報酬を受け取ったため、現金の増加（借方）とともに収益である「受取手数料」の増加（貸方）を認識します。"
   },
   {
-    "story": "【カメハウス 9】亀仙流の記念Tシャツ（商品）をファンに 6,000円で売り上げ、代金は現金で受け取った。",
-    "debit": { "account": "現金", "amount": 6000 },
-    "credit": { "account": "売上", "amount": 6000 },
-    "explanation": "資産（Asset）の「現金」が増加（借方）、収益（Revenue）の「売上」が増加（貸方）します。"
+    "story": "アジトの手持ち現金 100,000円を、資金の分散・隠蔽のため普通預金口座へ預け入れた。",
+    "debit": [
+      { "account": "普通預金", "amount": 100000 }
+    ],
+    "credit": [
+      { "account": "現金", "amount": 100000 }
+    ],
+    "explanation": "現金口座から普通預金口座への移動です。資産の増加（普通預金）を借方に、資産の減少（現金）を貸方に記帳します。"
   },
   {
-    "story": "【カメハウス 10】道場を開設するため、亀仙人が個人資金 50,000円を現金で出資した（元入れ）。",
-    "debit": { "account": "現金", "amount": 50000 },
-    "credit": { "account": "資本金", "amount": 50000 },
-    "explanation": "資産（Asset）の「現金」が増加（借方）、純資産（Net Assets）である「資本金」が増加（貸方）します。"
+    "story": "警察サイバー課の強制捜索に備え、旧式ルーター（備品）の廃棄および緊急通信回線の切断手数料として、現金 15,000円を支払った（支払手数料勘定を用いること）。",
+    "debit": [
+      { "account": "支払手数料", "amount": 15000 }
+    ],
+    "credit": [
+      { "account": "現金", "amount": 15000 }
+    ],
+    "explanation": "回線切断や諸手続きに伴う費用は「支払手数料」として借方に計上し、支払った現金を貸方に計上します。"
   }
 ];
 
-let activeQuiz = DEFAULT_QUIZ;
+let questions = [];
 let currentIndex = 0;
+let correctCount = 0;
+let answeredQuestions = new Set();
 
-// 3. ドロップダウンの選択肢を動的に再生成する関数
-function updateAccountDropdowns() {
-  const debitSelect = document.getElementById("debitAccount");
-  const creditSelect = document.getElementById("creditAccount");
-
-  // 現在の選択状態を保持（リセット時に消えないように）
-  const prevDebVal = debitSelect.value;
-  const prevCrdVal = creditSelect.value;
-
-  debitSelect.innerHTML = '<option value="">選択してください</option>';
-  creditSelect.innerHTML = '<option value="">選択してください</option>';
-
-  currentAccounts.forEach(title => {
-    const opt1 = document.createElement("option");
-    opt1.value = title;
-    opt1.textContent = title;
-    debitSelect.appendChild(opt1);
-
-    const opt2 = document.createElement("option");
-    opt2.value = title;
-    opt2.textContent = title;
-    creditSelect.appendChild(opt2);
-  });
-
-  debitSelect.value = prevDebVal;
-  creditSelect.value = prevCrdVal;
-}
-
-// 4. クイズ配列から勘定科目をスキャンして自動登録する関数
-function syncAccountsFromQuiz(quizArray) {
-  const accountSet = new Set(BASE_ACCOUNTS);
-
-  quizArray.forEach(q => {
-    if (q.debit && q.debit.account) accountSet.add(q.debit.account);
-    if (q.credit && q.credit.account) accountSet.add(q.credit.account);
-  });
-
-  currentAccounts = Array.from(accountSet);
-  updateAccountDropdowns();
-}
-
-// 5. アプリ初期化
-function initApp() {
-  // 保存されたカスタム問題があれば読み込み
-  const savedData = localStorage.getItem("custom_bookkeeping_quiz");
-  if (savedData) {
-    try {
-      activeQuiz = JSON.parse(savedData);
-    } catch (e) {
-      activeQuiz = DEFAULT_QUIZ;
-    }
+function init() {
+  const saved = localStorage.getItem("cyber_boki_data");
+  if (saved) {
+    try { questions = JSON.parse(saved); } catch (e) { questions = defaultData; }
+  } else {
+    questions = defaultData;
   }
+  restartQuiz();
+}
 
-  // 科目を同期・ドロップダウン構築
-  syncAccountsFromQuiz(activeQuiz);
+function restartQuiz() {
+  currentIndex = 0;
+  correctCount = 0;
+  answeredQuestions.clear();
+  document.getElementById("quiz-area").style.display = "block";
+  document.getElementById("clear-area").style.display = "none";
   loadQuestion(0);
 }
 
-// 6. 問題読み込み関数（JSON反映）
-function importCustomQuiz() {
-  const input = document.getElementById("jsonInput").value.trim();
-  if (!input) {
-    alert("JSONデータを貼り付けてください。");
-    return;
-  }
-  try {
-    const parsed = JSON.parse(input);
-    if (!Array.isArray(parsed) || parsed.length === 0) {
-      throw new Error("配列形式ではありません。");
-    }
-    activeQuiz = parsed;
-    localStorage.setItem("custom_bookkeeping_quiz", JSON.stringify(parsed));
-    
-    // 新しい問題から新しい科目を自動抽出して更新
-    syncAccountsFromQuiz(activeQuiz);
+function createRowHTML(account = "", amount = "") {
+  const div = document.createElement("div");
+  div.className = "entry-row";
+  div.innerHTML = `
+    <input type="text" placeholder="勘定科目" value="${account}" lang="ja">
+    <input type="number" placeholder="金額" value="${amount}">
+    <button type="button" class="btn-remove" onclick="removeRow(this)">✕</button>
+  `;
+  return div;
+}
 
-    currentIndex = 0;
-    loadQuestion(currentIndex);
-    alert(`新しい問題（全${activeQuiz.length}問）を読み込みました！勘定科目リストも自動更新されました。`);
-  } catch (err) {
-    alert("データの形式に誤りがあります。JSONフォーマットを確認してください。");
+function addRow(side) {
+  document.getElementById(`${side}-rows`).appendChild(createRowHTML("", ""));
+}
+
+function removeRow(btn) {
+  const row = btn.closest(".entry-row");
+  if (row.parentElement.children.length > 1) {
+    row.remove();
+  } else {
+    alert("SYSTEM_ERR: MINIMUM 1 RECORD REQUIRED.");
   }
 }
 
-// 7. 問題表示
 function loadQuestion(index) {
-  const q = activeQuiz[index];
-  document.getElementById("progress").textContent = `第 ${index + 1} 問 / 全 ${activeQuiz.length} 問`;
-  document.getElementById("questionText").textContent = q.story;
-  
-  // 入力欄リセット
-  document.getElementById("debitAccount").value = "";
-  document.getElementById("debitAmount").value = "";
-  document.getElementById("creditAccount").value = "";
-  document.getElementById("creditAmount").value = "";
-  
-  document.getElementById("resultBox").style.display = "none";
-  document.getElementById("submitBtn").style.display = "block";
+  if (index < 0 || index >= questions.length) return;
+  currentIndex = index;
+
+  document.getElementById("q-number").textContent = `> NODE_TARGET // 0${index + 1} OF ${questions.length}`;
+  document.getElementById("story-display").textContent = questions[index].story;
+
+  document.getElementById("debit-rows").innerHTML = "";
+  document.getElementById("credit-rows").innerHTML = "";
+  addRow("debit");
+  addRow("credit");
+
+  const res = document.getElementById("result-display");
+  res.style.display = "none";
+  res.className = "result-box";
+
+  const nextBtn = document.getElementById("next-btn");
+  nextBtn.textContent = (currentIndex === questions.length - 1) ? "COMPLETE_RUN >" : "NEXT_NODE >";
 }
 
-// 8. 判定処理
+function getEntries(side) {
+  const rows = document.getElementById(`${side}-rows`).children;
+  const entries = [];
+  for (let row of rows) {
+    const inputs = row.querySelectorAll("input");
+    const account = inputs[0].value.trim();
+    const amount = parseInt(inputs[1].value, 10);
+    if (account && !isNaN(amount)) entries.push({ account, amount });
+  }
+  return entries;
+}
+
 function checkAnswer() {
-  const q = activeQuiz[currentIndex];
-  const userDebAcc = document.getElementById("debitAccount").value;
-  const userDebAmt = parseInt(document.getElementById("debitAmount").value, 10);
-  const userCrdAcc = document.getElementById("creditAccount").value;
-  const userCrdAmt = parseInt(document.getElementById("creditAmount").value, 10);
+  const q = questions[currentIndex];
+  const userDebit = getEntries("debit");
+  const userCredit = getEntries("credit");
+  const correctDebit = Array.isArray(q.debit) ? q.debit : [q.debit];
+  const correctCredit = Array.isArray(q.credit) ? q.credit : [q.credit];
 
-  const isCorrect = (userDebAcc === q.debit.account && userDebAmt === q.debit.amount &&
-                     userCrdAcc === q.credit.account && userCrdAmt === q.credit.amount);
+  const matchSide = (u, c) => {
+    if (u.length !== c.length) return false;
+    const sU = [...u].sort((a,b) => a.account.localeCompare(b.account) || a.amount - b.amount);
+    const sC = [...c].sort((a,b) => a.account.localeCompare(b.account) || a.amount - b.amount);
+    return sU.every((v, i) => v.account === sC[i].account && v.amount === sC[i].amount);
+  };
 
-  const resultBox = document.getElementById("resultBox");
-  const resultText = document.getElementById("resultText");
-  const explanationText = document.getElementById("explanationText");
+  const isOk = matchSide(userDebit, correctDebit) && matchSide(userCredit, correctCredit);
+  const res = document.getElementById("result-display");
+  res.style.display = "block";
 
-  resultBox.style.display = "block";
-  document.getElementById("submitBtn").style.display = "none";
-
-  if (isCorrect) {
-    resultBox.className = "result correct";
-    resultText.textContent = "◎ 正解！ (Correct)";
+  if (isOk) {
+    res.className = "result-box correct";
+    res.innerHTML = `
+      <strong>[ACCESS GRANTED] パケット照合完了 // ファイアウォール突破</strong><br>
+      対象ノードのルート権限を一時奪取しました。セキュリティログ消去完了。<br><br>
+      【プロトコル解説】<br>${q.explanation}
+    `;
+    if (!answeredQuestions.has(currentIndex)) {
+      correctCount++;
+      answeredQuestions.add(currentIndex);
+    }
   } else {
-    resultBox.className = "result incorrect";
-    resultText.textContent = `× 不正解 (Incorrect) 【正解: (借) ${q.debit.account} ${q.debit.amount} / (貸) ${q.credit.account} ${q.credit.amount}】`;
+    res.className = "result-box wrong";
+    const dStr = correctDebit.map(d => `(${d.account}: ${d.amount.toLocaleString()})`).join(" ");
+    const cStr = correctCredit.map(c => `(${c.account}: ${c.amount.toLocaleString()})`).join(" ");
+    res.innerHTML = `
+      <strong>[ALERT: TRACE DETECTED] 不正パケット検知 // 逆探知警告</strong><br>
+      「IDS（侵入検知システム）作動！ 接続プロトコルが不正です。IPアドレスを偽装してください。」<br><br>
+      【正規パケット（正解）】<br>
+      借方: ${dStr}<br>
+      貸方: ${cStr}<br><br>
+      【解析ログ】<br>${q.explanation}
+    `;
+    answeredQuestions.add(currentIndex);
   }
-  
-  explanationText.textContent = q.explanation;
 }
 
-// 9. 次の問題へ
+function prevQuestion() { if (currentIndex > 0) loadQuestion(currentIndex - 1); }
 function nextQuestion() {
-  currentIndex++;
-  if (currentIndex < activeQuiz.length) {
-    loadQuestion(currentIndex);
+  if (currentIndex < questions.length - 1) loadQuestion(currentIndex + 1);
+  else showClearScreen();
+}
+
+function showClearScreen() {
+  document.getElementById("quiz-area").style.display = "none";
+  const clearArea = document.getElementById("clear-area");
+  clearArea.style.display = "block";
+
+  const total = questions.length;
+  let endingText = "";
+  if (correctCount === total) {
+    endingText = `
+      <span style="color:var(--matrix-green); font-weight:bold; font-size:1.1rem;">【ROOT PRIVILEGE OBTAINED】</span><br>
+      ノード制圧率 100%（${total}/${total}）。<br>
+      痕跡を一切残さず、メインフレームの経理元帳を完全書き換え。サイバー界隈に「ゴースト」として名を轟かせました。
+    `;
+  } else if (correctCount >= 7) {
+    endingText = `
+      <span style="color:#facc15; font-weight:bold; font-size:1.1rem;">【SESSION DISCONNECTED】</span><br>
+      ノード制圧率: ${correctCount}/${total}。<br>
+      いくつかのノードで逆探知を受けかけましたが、寸前でVPNを切断して退避。重要データの一部サルベージには成功しました。
+    `;
   } else {
-    alert("全問が終了しました！お疲れ様でした。");
-    currentIndex = 0;
-    loadQuestion(currentIndex);
+    endingText = `
+      <span style="color:var(--alert-red); font-weight:bold; font-size:1.1rem;">【SYSTEM LOCKED OUT】</span><br>
+      ノード制圧率: ${correctCount}/${total}。<br>
+      多重照合エラーによりアジトの物理IPが特定されました。警察サイバー課が突入してくる前に、サイバーデッキを物理破壊してください…！
+    `;
+  }
+  document.getElementById("score-text").innerHTML = endingText;
+}
+
+function loadCustomData() {
+  const input = document.getElementById("json-input").value;
+  try {
+    const data = JSON.parse(input);
+    if (!Array.isArray(data) || data.length === 0) throw new Error();
+    questions = data;
+    localStorage.setItem("cyber_boki_data", JSON.stringify(data));
+    alert("PAYLOAD INJECTED.");
+    restartQuiz();
+  } catch (e) {
+    alert("INVALID PAYLOAD FORMAT.");
   }
 }
 
-window.onload = initApp;
+window.onload = init;
 </script>
+
 </body>
 </html>
